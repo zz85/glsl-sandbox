@@ -61,6 +61,7 @@
 		<script src='js/helpers.js'></script>
 		<script src="js/codemirror.js"></script>
 		<script src="js/glsl.js"></script>
+		<script src="audiokeys/AudioKeys.js"></script>
 
 		<script id="example" type="x-shader/x-fragment">#ifdef GL_ES
 precision mediump float;
@@ -156,7 +157,7 @@ void main( void ) {
 			frontTarget, backTarget, screenProgram, getWebGL, resizer = {}, compileOnChangeCode = true;
 			
 			
-			var playMusicButton;
+			var playMusicButton, audiokeys;
 
 			init();
 			if (gl) { animate(); }
@@ -206,11 +207,22 @@ void main( void ) {
 
 				rightside.appendChild( fullscreenButton );
 				
+				
+				audiokeys = new AudioKeys('05 Esther.ogg');
+				audiokeys.addWatchers(0, 256, 0, 1);
+				
 				// Add play button
 				playMusicButton = document.createElement( 'button' );
 				playMusicButton.textContent = 'Play Music';
 				playMusicButton.addEventListener( 'click', function ( event ) {
 
+					
+					audiokeys.load(function() {
+						// When audio file is ready to play
+						audiokeys.play();
+					});
+					// adds  audio monitors
+					
 					
 
 				}, false );
@@ -693,7 +705,8 @@ void main( void ) {
 				if ( !currentProgram ) return;
 
 				parameters.time = Date.now() - parameters.startTime;
-				parameters.audio = Math.sin((Date.now()  - parameters.startTime)/1000);
+				audiokeys.process();
+				parameters.audio = audiokeys.getLevels(0);
 
 				// Set uniforms for custom shader
 
