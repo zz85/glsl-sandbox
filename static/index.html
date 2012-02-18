@@ -67,6 +67,7 @@ precision mediump float;
 #endif
 
 uniform float time;
+uniform float audio;
 uniform vec2 mouse;
 uniform vec2 resolution;
 
@@ -153,6 +154,9 @@ void main( void ) {
 			var code, canvas, gl, buffer, currentProgram, vertexPosition,
 			parameters = { startTime: Date.now(), time: 0, mouseX: 0.5, mouseY: 0.5, screenWidth: 0, screenHeight: 0 },
 			frontTarget, backTarget, screenProgram, getWebGL, resizer = {}, compileOnChangeCode = true;
+			
+			
+			var playMusicButton;
 
 			init();
 			if (gl) { animate(); }
@@ -201,6 +205,17 @@ void main( void ) {
 				}, false );
 
 				rightside.appendChild( fullscreenButton );
+				
+				// Add play button
+				playMusicButton = document.createElement( 'button' );
+				playMusicButton.textContent = 'Play Music';
+				playMusicButton.addEventListener( 'click', function ( event ) {
+
+					
+
+				}, false );
+				// toolbar.appendChild( button );
+				rightside.appendChild( playMusicButton );
 
 				var button = document.createElement( 'a' );
 				button.textContent = 'gallery';
@@ -435,7 +450,8 @@ void main( void ) {
 				cacheUniformLocation( program, 'mouse' );
 				cacheUniformLocation( program, 'resolution' );
 				cacheUniformLocation( program, 'backbuffer' );
-
+				cacheUniformLocation( program, 'audio' );
+				
 				// Load program into GPU
 
 				gl.useProgram( currentProgram );
@@ -677,12 +693,14 @@ void main( void ) {
 				if ( !currentProgram ) return;
 
 				parameters.time = Date.now() - parameters.startTime;
+				parameters.audio = Math.sin((Date.now()  - parameters.startTime)/1000);
 
 				// Set uniforms for custom shader
 
 				gl.useProgram( currentProgram );
 
 				gl.uniform1f( currentProgram.uniformsCache[ 'time' ], parameters.time / 1000 );
+				gl.uniform1f( currentProgram.uniformsCache[ 'audio' ], parameters.audio );
 				gl.uniform2f( currentProgram.uniformsCache[ 'mouse' ], parameters.mouseX, parameters.mouseY );
 				gl.uniform2f( currentProgram.uniformsCache[ 'resolution' ], parameters.screenWidth, parameters.screenHeight );
 				gl.uniform1i( currentProgram.uniformsCache[ 'backbuffer' ], 0 );
