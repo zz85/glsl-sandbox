@@ -247,6 +247,7 @@ var MozAudioKeys = function(url) {
 	this.audio = audio;
 	
 	this.watchers = [];
+	this.dspPath = 'dsp.js';
 	
 	var thisClass = this;
 	audio.addEventListener('loadedmetadata', function() {
@@ -295,11 +296,11 @@ MozAudioKeys.prototype.ready = function() {
 MozAudioKeys.prototype.load = function(callback) {
 	
 	// Makes sures DFT is loaded.
-	var url = 'dsp.js';
+	
 	var element;
     element=document.createElement("script");
     element.setAttribute("language","javascript");
-    element.setAttribute("src", url );
+    element.setAttribute("src", this.dspPath );
 
 	var thisClass = this;
     element.onreadystatechange= function () {

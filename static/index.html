@@ -208,7 +208,9 @@ void main( void ) {
 				rightside.appendChild( fullscreenButton );
 				
 				
-				audiokeys = new AudioKeys('05 Esther.ogg');
+				
+				audiokeys = new AudioKeys('');
+				
 				audiokeys.addWatchers(0, 256, 0, 1);
 				
 				// Add play button
@@ -216,12 +218,26 @@ void main( void ) {
 				playMusicButton.textContent = 'Play Music';
 				playMusicButton.addEventListener( 'click', function ( event ) {
 
+					var music = [
+						'music/01 The Beginning.ogg',
+						'music/04 Jakobson.ogg',
+						'music/05 Esther.ogg',
+						'music/07 The Code.ogg'
+					];
 					
+					var url = prompt('Enter path to your music file', music[0]);
+					
+					compileButton.textContent = 'Loading audio: ' + url + '...';
+					audiokeys = new AudioKeys(url);
+					if (audiokeys.dspPath) audiokeys.dspPath = 'audiokeys/' + audiokeys.dspPath;
+					
+					// adds  audio monitors
+					audiokeys.addWatchers(0, 256, 0, 1);
 					audiokeys.load(function() {
 						// When audio file is ready to play
 						audiokeys.play();
 					});
-					// adds  audio monitors
+					
 					
 					
 
