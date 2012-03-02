@@ -20,7 +20,7 @@ var track = createElementOfId('track');
 var bubble = createElementOfId('bubble');
 var lslider = createElementOfId('lslider');
 var rslider = createElementOfId('rslider');
-var disableUpdate = false;
+var isBalloonOpen = false;
 var activated = false;
 
 lslider.className = 'slider';
@@ -96,19 +96,31 @@ function onMouseMove(e) {
 
 }
 
+var selfDestructBalloon;
 vtrack.onmousemove = onMouseMove;
 vtrack.onclick = deactivateBalloon;
-vtrack.onmouseout = deactivateBalloon;
+vtrack.onmouseout = function() {
+	selfDestructBalloon = setTimeout(deactivateBalloon, 800 );
+	bubble.className = 'animateBubble fadeBubble';
+};
+
+vtrack.onmouseover = function() {
+	console.log("entered");
+	if (selfDestructBalloon) {
+		clearTimeout(selfDestructBalloon);
+		bubble.className = 'animateBubble showBubble';
+	}
+};
 
 function deactivateBalloon() {
-	disableUpdate = false;
+	isBalloonOpen = false;
 	bubble.className = 'hideBubble';
 	
 }
 
 function activateBalloon() {
 
-		disableUpdate = true;
+		isBalloonOpen = true;
 		bubble.className = 'showBubble animateBubble';
 
 		current = token.string;
@@ -164,7 +176,7 @@ code.setOption("onKeyEvent", function() {
 		// activated by mouse
 		activated = false;
 	} else {
-		if (disableUpdate)
+		if (isBalloonOpen)
 			deactivateBalloon();
 	
 	}
@@ -173,12 +185,20 @@ code.setOption("onKeyEvent", function() {
 
 function cursorUpdate() {
 	activated = true;
+
+	var oldToken = token;
+
 	cursor = code.getCursor();
 	token = code.getTokenAt(cursor);
-
+	console.log(token, oldToken);
 
 	if (token.className === "number") {
-		if (disableUpdate) return;
+		if (isBalloonOpen) {
+			if (oldToken && (oldToken.start==token.start)) {
+				console.log(cursor);
+				return;
+			}
+		}
 		activateBalloon();
 
 	} else {
