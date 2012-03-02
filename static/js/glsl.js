@@ -7,6 +7,8 @@ CodeMirror.defineMode("glsl", function(config, parserConfig) {
       hooks = parserConfig.hooks || {},
       multiLineStrings = parserConfig.multiLineStrings;
   var isOperatorChar = /[+\-*&%=<>!?|\/]/;
+  var isDecimal = /^(\+|-)?((\d+(\.\d+)?)|(\.\d+))/;
+
 
   var curPunc;
 
@@ -20,14 +22,16 @@ CodeMirror.defineMode("glsl", function(config, parserConfig) {
       state.tokenize = tokenString(ch);
       return state.tokenize(stream, state);
     }
+
+    if (stream.match(isDecimal, true)) {
+      return "number";
+    }
+
     if (/[\[\]{}\(\),;\:\.]/.test(ch)) {
       curPunc = ch;
       return "bracket";
     }
-    if (/\d/.test(ch)) {
-      stream.eatWhile(/[\w\.]/);
-      return "number";
-    }
+
     if (ch == "/") {
       if (stream.eat("*")) {
         state.tokenize = tokenComment;

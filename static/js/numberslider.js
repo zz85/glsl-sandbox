@@ -139,27 +139,3 @@ function cursorUpdate() {
 	}
 
 }
-
-
-
-/*
-  function slideHere(e) {
-  var x = parseInt(e.style.left,0);
-  var y = parseInt(e.style.top,0);
-  target = e;
-  
-  current = target.innerHTML;
-  
-  if ( isFloat = current.indexOf('.')>-1 ) {
-    current = parseFloat(current);
-  } else {
-    current = parseInt(current, 0);
-  }
-  //console.log(isFloat, current);
-  bubble.style.left = e.style.left; //x+'px';
-  bubble.style.top = e.style.top;
-  
-}
-
-
-   */
