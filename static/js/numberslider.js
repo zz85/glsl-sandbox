@@ -93,6 +93,7 @@ function onMouseMove(e) {
 
   code.replaceRange(result, startPos, endPos);
   endPos.ch += newLength - oldLength;
+  // code.setCursor(cursor);
   //debug.innerHTML = '(' + offsetX + ',' + offsetY + ')';
 
 
@@ -109,7 +110,6 @@ vtrack.onmouseout = function() {
 };
 
 vtrack.onmouseover = function() {
-	console.log("entered");
 	if (selfDestructBalloon) {
 		clearTimeout(selfDestructBalloon);
 		bubble.className = 'animateBubble showBubble';
@@ -129,8 +129,6 @@ function activateBalloon() {
 
 		current = token.string;
 		
-		console.log(token);
-
 		lslider.style.width = 0;
 		rslider.style.width = 0;
 
@@ -175,17 +173,57 @@ function repositionBalloon() {
 // we need to plug into codeMirror
 
 code.setOption("onCursorActivity", cursorUpdate);
-code.setOption("onKeyEvent", function() {
-	if (activated) {
-		// activated by mouse
-		activated = false;
-	} else {
-		if (isBalloonOpen)
-			deactivateBalloon();
+// code.setOption("onKeyEvent", function() {
+// 	if (activated) {
+// 		// activated by mouse
+// 		activated = false;
+// 	} else {
+// 		if (isBalloonOpen)
+// 			deactivateBalloon();
 	
+// 	}
+
+// });
+
+var s = code.getScrollerElement();
+s.addEventListener('mousemove', function(e) {
+		activated = true;
+
+	var oldToken = token;
+
+	cursor = code.coordsChar({x: e.clientX, y: e.clientY});
+	token = code.getTokenAt(cursor);
+
+	// Activated from Mouse click
+	if (token.className === "number") {
+		if (isBalloonOpen) {
+			if (oldToken && (oldToken.start==token.start)) {
+				return;
+			}
+		}
+		activateBalloon();
+
+	} else {
+
+		deactivateBalloon();
+
 	}
 
+	// startPos = {
+	// 	line: cursor.line,
+	// 	ch: token.start
+	// };
+	
+	// endPos = {
+	// 	line: cursor.line,
+	// 	ch: token.end
+	// };
+
+	// var a = code.markText(startPos, endPos, 'slide');
+	
 });
+
+
 
 function cursorUpdate() {
 	activated = true;
@@ -194,12 +232,10 @@ function cursorUpdate() {
 
 	cursor = code.getCursor();
 	token = code.getTokenAt(cursor);
-	console.log(token, oldToken);
 
 	if (token.className === "number") {
 		if (isBalloonOpen) {
 			if (oldToken && (oldToken.start==token.start)) {
-				console.log(cursor);
 				return;
 			}
 		}
