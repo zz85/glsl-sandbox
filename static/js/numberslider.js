@@ -21,6 +21,7 @@ var bubble = createElementOfId('bubble');
 var lslider = createElementOfId('lslider');
 var rslider = createElementOfId('rslider');
 var disableUpdate = false;
+var activated = false;
 
 lslider.className = 'slider';
 rslider.className = 'slider';
@@ -42,7 +43,7 @@ The above creates something like
 </div>
 */
 
-var trackWidth = parseInt(track.clientWidth, 0)-1;
+var trackWidth = parseInt(track.clientWidth, 0);
 var halfWidth = trackWidth/2;
 
 var target;
@@ -89,7 +90,7 @@ function onMouseMove(e) {
   code.replaceRange(result, startPos, endPos);
   endPos.ch += newLength - oldLength;
   //debug.innerHTML = '(' + offsetX + ',' + offsetY + ')';
-  
+
 
   return false;
 
@@ -97,7 +98,7 @@ function onMouseMove(e) {
 
 vtrack.onmousemove = onMouseMove;
 vtrack.onclick = deactivateBalloon;
-
+vtrack.onmouseout = deactivateBalloon;
 
 function deactivateBalloon() {
 	disableUpdate = false;
@@ -148,7 +149,7 @@ function repositionBalloon() {
 
 		// Position Bubble
 		bubble.style.left = atCoords.x + 'px';
-		bubble.style.top = atCoords.y - 5 + 'px';
+		bubble.style.top = atCoords.y - 2 + 'px';
 
 		// console.log('token', token, 'startCoords',  current);
 
@@ -158,18 +159,31 @@ function repositionBalloon() {
 // we need to plug into codeMirror
 
 code.setOption("onCursorActivity", cursorUpdate);
+code.setOption("onKeyEvent", function() {
+	if (activated) {
+		// activated by mouse
+		activated = false;
+	} else {
+		if (disableUpdate)
+			deactivateBalloon();
+	
+	}
+
+});
 
 function cursorUpdate() {
-
-	if (disableUpdate) return;
-	
+	activated = true;
 	cursor = code.getCursor();
 	token = code.getTokenAt(cursor);
 
 
 	if (token.className === "number") {
-
+		if (disableUpdate) return;
 		activateBalloon();
+
+	} else {
+
+		deactivateBalloon();
 
 	}
 

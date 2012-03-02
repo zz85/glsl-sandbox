@@ -8,8 +8,8 @@
 position:absolute;
 left:50%;
 width:10px;
-height:8px;
-border-radius:0 10px 10px 0;
+height:18px;
+border-radius:0 6px 6px 0;
 
 }
 
@@ -17,8 +17,8 @@ border-radius:0 10px 10px 0;
 position:absolute;
 right:50%;
 width:10px;
-height:8px;
-border-radius:10px 0 0 10px;
+height:18px;
+border-radius:6px 0 0 6px;
 
 
 
@@ -33,39 +33,32 @@ position:absolute;
 
 .slider {
 	/*	background-color: #ddd;*/
-	background-image: linear-gradient(bottom, rgb(50,50,50) 0%, rgb(80,80,80) 80%, rgb(50,50,50) 100%);
-background-image: -o-linear-gradient(bottom, rgb(50,50,50) 0%, rgb(80,80,80) 80%, rgb(50,50,50) 100%);
-background-image: -moz-linear-gradient(bottom, rgb(50,50,50) 0%, rgb(80,80,80) 80%, rgb(50,50,50) 100%);
-background-image: -webkit-linear-gradient(bottom, rgb(50,50,50) 0%, rgb(80,80,80) 80%, rgb(50,50,50) 100%);
-background-image: -ms-linear-gradient(bottom, rgb(50,50,50) 0%, rgb(80,80,80) 80%, rgb(50,50,50) 100%);
-background-image: -webkit-gradient(
-	linear,
-	left bottom,
-	left top,
-	color-stop(0, rgb(50,50,50))
-	color-stop(.8, rgb(80,80,80))
-	color-stop(1, rgb(50,50,50))
-	);
+	opacity: 0.8;
+	background-image: linear-gradient(bottom, rgb(150,150,150) 0%, rgb(80,80,80) 80%, rgb(50,50,50) 100%);
+background-image: -o-linear-gradient(bottom, rgb(150,150,150) 0%, rgb(80,80,80) 80%, rgb(50,50,50) 100%);
+background-image: -moz-linear-gradient(bottom, rgb(150,150,150) 0%, rgb(80,80,80) 80%, rgb(50,50,50) 100%);
+background-image: -webkit-linear-gradient(bottom, rgb(150,150,150) 0%, rgb(80,80,80) 80%, rgb(50,50,50) 100%);
+background-image: -ms-linear-gradient(bottom, rgb(150,150,150) 0%, rgb(80,80,80) 80%, rgb(50,50,50) 100%);
+
 } 
 
 #vtrack {
-height:8px;
+height:18px;
 width:100%;
 }
 
 #bubble {
 color:#fff;
-position:relative;
 background-color:#000;
-margin-top:-15px;
+margin-top:-25px;
 margin-left:-100px;
 text-align:center;
 width:200px;
 min-width:10px;
 border-radius:10px;
--webkit-box-shadow:0 0 3px rgba(0,0,0,0.25);
--moz-box-shadow:0 0 3px rgba(0,0,0,0.25);
-box-shadow:0 0 3px rgba(0,0,0,0.25);
+-webkit-box-shadow: 1px 1px 20px 0px rgba(255,255,255,0.5);
+-moz-box-shadow: 1px 1px 20px 0px rgba(255,255,255,0.5);
+box-shadow:1px 1px 20px 0px rgba(255,255,255,0.5);
 padding:3px;
 
 position: absolute;
@@ -86,6 +79,7 @@ border-color:#000 transparent transparent;
 border-style:solid;
 border-width:10px;
 margin:auto;
+/* ohoh box shadow doesn't work here. perhaps we need to try the 45deg rotation trick? */
 }
 
 .hideBubble {
