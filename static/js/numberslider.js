@@ -75,8 +75,12 @@ function onMouseMove(e) {
   var result;
   
   if (isFloat) {
-    result = current + val * 0.1;
-    result = result.toFixed(1);
+    // result = current + val * 0.01;
+
+    var sign = (val > 0) ? 1 : -1;
+    var mag = Math.abs(val);
+    result = current + sign * Math.pow(10.0, 0.02 * mag);
+    result = result.toFixed(2);
   } else {
     result = current + Math.round(val);
   }
