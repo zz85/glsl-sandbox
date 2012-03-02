@@ -20,6 +20,7 @@ var track = createElementOfId('track');
 var bubble = createElementOfId('bubble');
 var lslider = createElementOfId('lslider');
 var rslider = createElementOfId('rslider');
+var disableUpdate = false;
 
 lslider.className = 'slider';
 rslider.className = 'slider';
@@ -41,7 +42,7 @@ The above creates something like
 </div>
 */
 
-var trackWidth = parseInt(track.clientWidth, 0);
+var trackWidth = parseInt(track.clientWidth, 0)-1;
 var halfWidth = trackWidth/2;
 
 var target;
@@ -50,10 +51,11 @@ var isFloat;
 var token;
 var startPos;
 var endPos;
+var cursor;
 
 function onMouseMove(e) {
 
-  
+  repositionBalloon();
   var x = e.clientX; // this might come in useful later for out of bubble drags
   var y = e.clientY;
   
@@ -79,32 +81,41 @@ function onMouseMove(e) {
   }
   
   //target.innerHTML = result;
-  console.log('result', result);
+  // console.log('result', result);
+
+  var oldLength = endPos.ch - startPos.ch;
+  var newLength = (result+"").length;
 
   code.replaceRange(result, startPos, endPos);
+  endPos.ch += newLength - oldLength;
   //debug.innerHTML = '(' + offsetX + ',' + offsetY + ')';
-  cursorUpdate();
+  
+
   return false;
 
 }
 
 vtrack.onmousemove = onMouseMove;
+vtrack.onclick = deactivateBalloon;
 
-// we need to plug into codeMirror
 
-code.setOption("onCursorActivity", cursorUpdate);
-
-function cursorUpdate() {
+function deactivateBalloon() {
+	disableUpdate = false;
+	bubble.className = 'hideBubble';
 	
-	var cursor = code.getCursor();
-	token = code.getTokenAt(cursor);
+}
 
+function activateBalloon() {
 
-	if (token.className === "number") {
+		disableUpdate = true;
+		bubble.className = 'showBubble animateBubble';
 
 		current = token.string;
 		
 		console.log(token);
+
+		lslider.style.width = 0;
+		rslider.style.width = 0;
 
 		startPos = {
 			line: cursor.line,
@@ -116,25 +127,49 @@ function cursorUpdate() {
 			ch: token.end
 		};
 
-		// var startCoords = code.charCoords(startPos);
-		// var endCoords = code.charCoords(endPos);
-		// var atCoords =  {x: (startCoords.x + endCoords.x)/2, y: startCoords.y };
-		
-		var atCoords = code.charCoords(cursor);
-		
-
-		bubble.style.left = atCoords.x + 'px';
-		bubble.style.top = atCoords.y - 5 + 'px';
-		//lslider.style.width = 0;
-		//rslider.style.width = 0;
-
-		// console.log('token', token, 'startCoords',  current);
+		repositionBalloon();
 
 		if ( isFloat = current.indexOf('.')>-1 ) {
 			current = parseFloat(current);
 		} else {
 			current = parseInt(current, 0);
 		}
+}
+
+function repositionBalloon() {
+
+
+
+		var startCoords = code.charCoords(startPos);
+		var endCoords = code.charCoords(endPos);
+		var atCoords =  {x: (startCoords.x + endCoords.x)/2, y: startCoords.y };
+		
+		// var atCoords = code.charCoords(cursor);
+
+		// Position Bubble
+		bubble.style.left = atCoords.x + 'px';
+		bubble.style.top = atCoords.y - 5 + 'px';
+
+		// console.log('token', token, 'startCoords',  current);
+
+
+}
+
+// we need to plug into codeMirror
+
+code.setOption("onCursorActivity", cursorUpdate);
+
+function cursorUpdate() {
+
+	if (disableUpdate) return;
+	
+	cursor = code.getCursor();
+	token = code.getTokenAt(cursor);
+
+
+	if (token.className === "number") {
+
+		activateBalloon();
 
 	}
 
