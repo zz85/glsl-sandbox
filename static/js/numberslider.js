@@ -30,7 +30,8 @@ vtrack.appendChild(rslider);
 vtrack.appendChild(track);
 bubble.appendChild(vtrack);
 
-document.body.appendChild(bubble);
+var bubbleParent = code.getWrapperElement();
+bubbleParent.appendChild(bubble);
 
 /*
 The above creates something like
@@ -56,12 +57,12 @@ var cursor;
 
 function onMouseMove(e) {
 
-  repositionBalloon();
   var x = e.clientX; // this might come in useful later for out of bubble drags
   var y = e.clientY;
   
-  var offsetX = (e.offsetX!==undefined) ? e.offsetX : e.layerX;
-  var offsetY = (e.offsetY!==undefined) ? e.offsetY : e.layerY;
+  var rect = vtrack.getBoundingClientRect();
+  var offsetX = x - rect.left;
+  var offsetY = y - rect.top;
 
   var val = offsetX - halfWidth;
   if (val > 0) {
@@ -79,7 +80,7 @@ function onMouseMove(e) {
 
     var sign = (val > 0) ? 1 : -1;
     var mag = Math.abs(val);
-    result = current + sign * Math.pow(10.0, 0.02 * mag);
+    result = current - sign + sign * Math.pow(10.0, 0.015 * mag);
     result = result.toFixed(2);
   } else {
     result = current + Math.round(val);
@@ -162,8 +163,9 @@ function repositionBalloon() {
 		// var atCoords = code.charCoords(cursor);
 
 		// Position Bubble
-		bubble.style.left = atCoords.x + 'px';
-		bubble.style.top = atCoords.y - 2 + 'px';
+		var rect = bubbleParent.getBoundingClientRect();
+		bubble.style.left = (atCoords.x - rect.left) + 'px';
+		bubble.style.top = (atCoords.y - 2 - rect.top)+ 'px';
 
 		// console.log('token', token, 'startCoords',  current);
 
