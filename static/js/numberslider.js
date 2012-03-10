@@ -55,7 +55,12 @@ var startPos;
 var endPos;
 var cursor;
 
+bubble.className = 'hideBubble';
+
 function onMouseMove(e) {
+  if (!isBalloonOpen) {
+	return true;
+  }
 
   var x = e.clientX; // this might come in useful later for out of bubble drags
   var y = e.clientY;
@@ -90,9 +95,9 @@ function onMouseMove(e) {
   // console.log('result', result);
 
   var oldLength = endPos.ch - startPos.ch;
-  var newLength = (result+"").length;
+  var newLength = result.toString().length;
 
-  code.replaceRange(result, startPos, endPos);
+  code.replaceRange(result.toString(), startPos, endPos);
   endPos.ch += newLength - oldLength;
   // code.setCursor(cursor);
   //debug.innerHTML = '(' + offsetX + ',' + offsetY + ')';
@@ -106,21 +111,39 @@ var selfDestructBalloon;
 vtrack.onmousemove = onMouseMove;
 vtrack.onclick = deactivateBalloon;
 vtrack.onmouseout = function() {
-	selfDestructBalloon = setTimeout(deactivateBalloon, 800 );
-	bubble.className = 'animateBubble fadeBubble';
+	if (isBalloonOpen) {
+		isBalloonOpen = false;
+		selfDestructBalloon = setTimeout(cancelBalloon, 800 );
+		bubble.className = 'animateBubble fadeBubble';
+	}
 };
 
 vtrack.onmouseover = function() {
 	if (selfDestructBalloon) {
 		clearTimeout(selfDestructBalloon);
 		bubble.className = 'animateBubble showBubble';
+		isBalloonOpen = true;
+		selfDestructBalloon = 0;
 	}
 };
 
 function deactivateBalloon() {
 	isBalloonOpen = false;
+	if (selfDestructBalloon) {
+		clearTimeout(selfDestructBalloon);
+		selfDestructBalloon = 0;
+	}
 	bubble.className = 'hideBubble';
 	
+}
+
+function cancelBalloon() {
+	var oldLength = endPos.ch - startPos.ch;
+	var newLength = current.toString().length;
+
+	code.replaceRange(current.toString(), startPos, endPos);
+	endPos.ch += newLength - oldLength;
+	deactivateBalloon();
 }
 
 function activateBalloon() {
@@ -188,7 +211,7 @@ code.setOption("onCursorActivity", cursorUpdate);
 // });
 
 var s = code.getScrollerElement();
-s.addEventListener('mousemove', function(e) {
+s.addEventListener('mousedown', function(e) {
 		activated = true;
 
 	var oldToken = token;
