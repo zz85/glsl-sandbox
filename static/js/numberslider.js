@@ -48,7 +48,7 @@ var trackWidth = parseInt(track.clientWidth, 0);
 var halfWidth = trackWidth/2;
 
 var target;
-var current;
+var current, currentString;
 var isFloat;
 var token;
 var startPos;
@@ -139,9 +139,9 @@ function deactivateBalloon() {
 
 function cancelBalloon() {
 	var oldLength = endPos.ch - startPos.ch;
-	var newLength = current.toString().length;
+	var newLength = currentString.length;
 
-	code.replaceRange(current.toString(), startPos, endPos);
+	code.replaceRange(currentString, startPos, endPos);
 	endPos.ch += newLength - oldLength;
 	deactivateBalloon();
 }
@@ -151,7 +151,7 @@ function activateBalloon() {
 		isBalloonOpen = true;
 		bubble.className = 'showBubble animateBubble';
 
-		current = token.string;
+		currentString = token.string;
 		
 		lslider.style.width = 0;
 		rslider.style.width = 0;
@@ -168,10 +168,10 @@ function activateBalloon() {
 
 		repositionBalloon();
 
-		if ( isFloat = current.indexOf('.')>-1 ) {
-			current = parseFloat(current);
+		if ( isFloat = currentString.indexOf('.')>-1 ) {
+			current = parseFloat(currentString);
 		} else {
-			current = parseInt(current, 0);
+			current = parseInt(currentString, 0);
 		}
 }
 
