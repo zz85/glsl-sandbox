@@ -4,8 +4,6 @@
 	idea motivated by http://vimeo.com/36579366
 */
 
-
-
 var div = document.createElement('div');
 
 function createElementOfId(id) {
@@ -21,7 +19,6 @@ var bubble = createElementOfId('bubble');
 var lslider = createElementOfId('lslider');
 var rslider = createElementOfId('rslider');
 var isBalloonOpen = false;
-var activated = false;
 
 lslider.className = 'slider';
 rslider.className = 'slider';
@@ -177,8 +174,6 @@ function activateBalloon() {
 
 function repositionBalloon() {
 
-
-
 		var startCoords = code.charCoords(startPos);
 		var endCoords = code.charCoords(endPos);
 		var atCoords =  {x: (startCoords.x + endCoords.x)/2, y: startCoords.y };
@@ -190,30 +185,14 @@ function repositionBalloon() {
 		bubble.style.left = (atCoords.x - rect.left) + 'px';
 		bubble.style.top = (atCoords.y - 2 - rect.top)+ 'px';
 
-		// console.log('token', token, 'startCoords',  current);
-
-
 }
 
 // we need to plug into codeMirror
 
 code.setOption("onCursorActivity", cursorUpdate);
-// code.setOption("onKeyEvent", function() {
-// 	if (activated) {
-// 		// activated by mouse
-// 		activated = false;
-// 	} else {
-// 		if (isBalloonOpen)
-// 			deactivateBalloon();
-	
-// 	}
-
-// });
 
 var s = code.getScrollerElement();
 s.addEventListener('mousedown', function(e) {
-		activated = true;
-
 	var oldToken = token;
 
 	cursor = code.coordsChar({x: e.clientX, y: e.clientY});
@@ -227,32 +206,12 @@ s.addEventListener('mousedown', function(e) {
 			}
 		}
 		activateBalloon();
-
 	} else {
-
 		deactivateBalloon();
-
 	}
-
-	// startPos = {
-	// 	line: cursor.line,
-	// 	ch: token.start
-	// };
-	
-	// endPos = {
-	// 	line: cursor.line,
-	// 	ch: token.end
-	// };
-
-	// var a = code.markText(startPos, endPos, 'slide');
-	
 });
 
-
-
 function cursorUpdate() {
-	activated = true;
-
 	var oldToken = token;
 
 	cursor = code.getCursor();
@@ -264,7 +223,7 @@ function cursorUpdate() {
 				return;
 			}
 		}
-		activateBalloon();
+		//activateBalloon();
 
 	} else {
 
