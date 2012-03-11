@@ -83,6 +83,7 @@ function onMouseMove(e) {
     var sign = (val > 0) ? 1 : -1;
     var mag = Math.abs(val);
     result = current - sign + sign * Math.pow(10.0, 0.015 * mag);
+    interactiveUniform = result;
     result = result.toFixed(2);
   } else {
     result = current + Math.round(val);
@@ -131,7 +132,7 @@ function deactivateBalloon() {
 		selfDestructBalloon = 0;
 	}
 	bubble.className = 'hideBubble';
-	
+	endInteractiveUniform();
 }
 
 function cancelBalloon() {
@@ -141,6 +142,47 @@ function cancelBalloon() {
 	code.replaceRange(currentString, startPos, endPos);
 	endPos.ch += newLength - oldLength;
 	deactivateBalloon();
+}
+
+function startInteractiveUniform() {
+	if (!useSandboxInteractiveUniform) {
+		useSandboxInteractiveUniform = true;
+		compileOnChangeCode = false;
+		interactiveUniform = current;
+		
+		var uniformName = 'temp_sandbox_slider';
+		var oldLength = endPos.ch - startPos.ch;
+		var newLength = uniformName.length;
+
+		code.replaceRange(uniformName, startPos, endPos);
+		endPos.ch += newLength - oldLength;
+		
+		interactiveUniformCode = code.getValue();
+		var pos = interactiveUniformCode.indexOf('uniform');
+		if (pos < 0) {
+			pos = 0;
+		}
+		interactiveUniformCode = interactiveUniformCode.substring(0, pos) + "uniform " +
+			(isFloat ? "float " : "int ") + uniformName + ";" +
+			interactiveUniformCode.substring(pos);
+		
+		oldLength = endPos.ch - startPos.ch;
+		newLength = currentString.length;
+
+		code.replaceRange(currentString, startPos, endPos);
+		endPos.ch += newLength - oldLength;
+
+		compile();
+	}
+}
+
+function endInteractiveUniform() {
+	if (useSandboxInteractiveUniform) {
+		useSandboxInteractiveUniform = false;
+		interactiveUniformCode = "";
+		compileOnChangeCode = true;
+		compile();
+	}
 }
 
 function activateBalloon() {
@@ -170,6 +212,7 @@ function activateBalloon() {
 		} else {
 			current = parseInt(currentString, 0);
 		}
+		startInteractiveUniform();
 }
 
 function repositionBalloon() {
@@ -212,6 +255,10 @@ s.addEventListener('mousedown', function(e) {
 });
 
 function cursorUpdate() {
+	if (!compileOnChangeCode) {
+		return;
+	}
+
 	var oldToken = token;
 
 	cursor = code.getCursor();
