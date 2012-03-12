@@ -257,6 +257,27 @@ code.getInputField().addEventListener('keydown', function(e) {
 	// Right now deactivate balloon on keypress.
 	deactivateBalloon();
 
+	// Keypresses handling still a little buggy below.
+
+	// var oldToken = token;
+
+	// cursor = code.getCursor();
+	// token = code.getTokenAt(cursor);
+
+	// if (token.className === "number") {
+	// 	if (isBalloonOpen) {
+	// 		if (oldToken && (oldToken.start==token.start)) {
+	// 			return;
+	// 		}
+	// 	}
+	// 	activateBalloon();
+
+	// } else {
+
+	// 	deactivateBalloon();
+
+	// }
+
 });
 
 
