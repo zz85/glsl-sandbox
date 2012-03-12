@@ -232,7 +232,7 @@ function repositionBalloon() {
 
 // we need to plug into codeMirror
 
-code.setOption("onCursorActivity", cursorUpdate);
+
 
 var s = code.getScrollerElement();
 s.addEventListener('mousedown', function(e) {
@@ -254,28 +254,39 @@ s.addEventListener('mousedown', function(e) {
 	}
 });
 
-function cursorUpdate() {
-	if (!compileOnChangeCode) {
-		return;
-	}
 
-	var oldToken = token;
+code.getInputField().addEventListener('keydown', function(e) {
+	// Right now deactivate balloon keypress.
+	deactivateBalloon();
+});
 
-	cursor = code.getCursor();
-	token = code.getTokenAt(cursor);
 
-	if (token.className === "number") {
-		if (isBalloonOpen) {
-			if (oldToken && (oldToken.start==token.start)) {
-				return;
-			}
-		}
-		//activateBalloon();
+// We should not use this, because the API doesn't give 
+// sufficient data on the event source.
 
-	} else {
+// code.setOption("onCursorActivity", cursorUpdate);
+// function cursorUpdate() {
+// 	if (!compileOnChangeCode) {
+// 		return;
+// 	}
 
-		deactivateBalloon();
+// 	var oldToken = token;
 
-	}
+// 	cursor = code.getCursor();
+// 	token = code.getTokenAt(cursor);
 
-}
+// 	if (token.className === "number") {
+// 		if (isBalloonOpen) {
+// 			if (oldToken && (oldToken.start==token.start)) {
+// 				return;
+// 			}
+// 		}
+// 		//activateBalloon();
+
+// 	} else {
+
+// 		deactivateBalloon();
+
+// 	}
+
+// }
