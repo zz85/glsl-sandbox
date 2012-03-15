@@ -81,8 +81,9 @@ function onMouseMove(e) {
     // result = current + val * 0.01;
 
     var sign = (val > 0) ? 1 : -1;
+    var rate = Math.min(Math.max(Math.log(Math.abs(current)) * 0.01, 0.008), 1);
     var mag = Math.abs(val);
-    result = current - sign + sign * Math.pow(10.0, 0.015 * mag);
+    result = current - sign + sign * Math.pow(10.0, rate * mag);
     interactiveUniform = result;
     result = result.toFixed(2);
   } else {
