@@ -30,7 +30,7 @@ CodeMirror.defineMode("glsl", function(config, parserConfig) {
       return "bracket";
     }
 
-    if (stream.match(isDecimal, false)) {
+    if (stream.match(isDecimal, true)) {
       return "number";
     }
 
