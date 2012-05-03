@@ -259,6 +259,7 @@ s.addEventListener('mousedown', function(e) {
 
 	// combine both ends to give the token around cursor
 	var tokenWord = beforeCh + afterCh;
+	console.log('combined', tokenWord);
 
 	var matchedPosition = -1;
 	var isCursorAtNumber = false;
@@ -285,12 +286,15 @@ s.addEventListener('mousedown', function(e) {
 
 	// check boundaries
 	if (isCursorAtNumber && matchedPosition>0) {
-		console.log('ho', matchedPosition);
+
 		if (!isOperatorChar.test(tokenWord[matchedPosition-1])) {
+			
 			isCursorAtNumber = false;
-			console.log('no chance');
+
 		} else {
-			console.log('one more chance');
+			
+			// This means number is prepended with / * or similar characters.
+
 		}
 
 	}
@@ -298,8 +302,8 @@ s.addEventListener('mousedown', function(e) {
 	if (isCursorAtNumber) {
 		
 
-		var trueMatch = tokenWord.substring(matchedPosition, endMatch - matchedPosition);
-		console.log('true match', trueMatch);
+		var trueMatch = tokenWord.substring(matchedPosition, endMatch);
+		
 
 		token = {
 			className: 'number',
@@ -308,18 +312,15 @@ s.addEventListener('mousedown', function(e) {
 			string: trueMatch
 		};
 
-		console.log('token', token);
-		var token2 = code.getTokenAt(cursor);
-		console.log('compare', token2);
-
+		console.log('true match', trueMatch);
 		console.log('verify match.', lineText.substring(token.start, token.end) );
+
+		console.log('create token', token);
+		var token2 = code.getTokenAt(cursor);
+		console.log('compare token', token2);
+
+
 	}
-
-	console.log('search', matchedPosition);
-	console.log('combined', tokenWord);
-
-	
-
 
 	// Activated from Mouse click
 	if (isCursorAtNumber) {
@@ -340,25 +341,9 @@ code.getInputField().addEventListener('keydown', function(e) {
 	deactivateBalloon();
 
 	// Keypresses handling still a little buggy below.
-
 	// var oldToken = token;
-
 	// cursor = code.getCursor();
-	// token = code.getTokenAt(cursor);
 
-	// if (token.className === "number") {
-	// 	if (isBalloonOpen) {
-	// 		if (oldToken && (oldToken.start==token.start)) {
-	// 			return;
-	// 		}
-	// 	}
-	// 	activateBalloon();
-
-	// } else {
-
-	// 	deactivateBalloon();
-
-	// }
 
 });
 
