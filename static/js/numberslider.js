@@ -233,12 +233,13 @@ function repositionBalloon() {
 
 // we need to plug into codeMirror
 var s = code.getScrollerElement();
-var isDecimal = /^(\+|\-)?((\d+[\.]\d+)|([\.]\d+)|(\d+[\.])|(\d+))/;
+var isDecimal = /(\+|\-)?((\d+[\.]\d+)|([\.]\d+)|(\d+[\.])|(\d+))/g;
 var isOperatorChar = /[+\-*&%=<>!?|\/,{}]/;
 
 s.addEventListener('mousedown', function(e) {
 
 	var oldToken = token;
+	token = null;
 
 	cursor = code.coordsChar({x: e.clientX, y: e.clientY});
 	console.log(cursor);
@@ -258,42 +259,31 @@ s.addEventListener('mousedown', function(e) {
 
 	// combine both ends to give the token around cursor
 	var tokenWord = beforeCh + afterCh;
-	start = cursor.ch - cursorInToken;
-	end = start + tokenWord.length
 
-	var subtokenWord = tokenWord;
-	var startOfDecimal = subtokenWord.search(isDecimal);
-	var matchedPosition = 0;
+	var matchedPosition = -1;
 	var isCursorAtNumber = false;
 
-	var endMatch = -1;
-	console.log('startOfDecimal, matchedPosition, cursorInToken', startOfDecimal, matchedPosition, cursorInToken);
+	var endMatch;
+	var match;
+	
+	while ((match = isDecimal.exec(tokenWord))!= null) {
 
-
-	while (startOfDecimal>-1) {
-		console.log('startOfDecimal, matchedPosition, cursorInToken', startOfDecimal, matchedPosition, cursorInToken);
-
-		matchedPosition += startOfDecimal;
-
-		var m = subtokenWord.match(isDecimal);
-		matchedPosition += m.index;
-		endMatch = m[0].length + matchedPosition ;
+		console.log('match', match, 'at', match.index);
+		matchedPosition = match.index;
+		endMatch = match[0].length + matchedPosition;
 
 		if ( matchedPosition <= cursorInToken && endMatch >= cursorInToken ) {
 			
 			// really found
 			isCursorAtNumber = true;
-
+			console.log('we matched', match[0], matchedPosition, endMatch);
 			break;
 
 		}
 
-		
-		console.log('//subtokenWord', subtokenWord);
-		subtokenWord = subtokenWord.substring(startOfDecimal);
-		startOfDecimal = subtokenWord.search(isDecimal);
 	}
 
+	// check boundaries
 	if (isCursorAtNumber && matchedPosition>0) {
 		console.log('ho', matchedPosition);
 		if (!isOperatorChar.test(tokenWord[matchedPosition-1])) {
@@ -307,27 +297,28 @@ s.addEventListener('mousedown', function(e) {
 
 	if (isCursorAtNumber) {
 		
-		// check boundaries
-		
 
 		var trueMatch = tokenWord.substring(matchedPosition, endMatch - matchedPosition);
 		console.log('true match', trueMatch);
 
 		token = {
 			className: 'number',
-			start: matchedPosition + start,
-			end: endMatch + start,
+			start: matchedPosition + cursor.ch - cursorInToken,
+			end: endMatch + cursor.ch - cursorInToken,
 			string: trueMatch
 		};
+
+		console.log('token', token);
+		var token2 = code.getTokenAt(cursor);
+		console.log('compare', token2);
+
+		console.log('verify match.', lineText.substring(token.start, token.end) );
 	}
 
 	console.log('search', matchedPosition);
-	console.log('before', beforeCh);
-	console.log('after', afterCh);
 	console.log('combined', tokenWord);
 
-	// token = code.getTokenAt(cursor);
-	console.log('token', token);
+	
 
 
 	// Activated from Mouse click
